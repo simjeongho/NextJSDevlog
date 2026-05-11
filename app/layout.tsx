@@ -18,15 +18,13 @@ export const metadata: Metadata = {
   description: "개발자를 위한 학습 기록 플랫폼",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
-      <body className="antialiased">
+      <body className="min-h-screen bg-black text-white antialiased">
         <Header />
         {children}
-        </body>
+      </body>
     </html>
   );
 }

@@ -1,4 +1,5 @@
 // app/page.tsx
+import Container from "@/components/Container";
 import PostCard from "@/components/PostCard";
 
 const posts = [
@@ -49,8 +50,8 @@ const posts = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <main className="mx-auto max-w-5xl px-6 py-12">
+    <Container>
+      <main className="py-12">
         <div className="mb-10">
           <h1 className="mb-2 text-4xl font-semibold tracking-tight">
             최근 글
@@ -66,6 +67,6 @@ export default function HomePage() {
           ))}
         </div>
       </main>
-    </div>
+    </Container>   
   );
 }

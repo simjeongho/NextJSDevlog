@@ -1,65 +1,71 @@
 import Image from "next/image";
 
-export default function Home() {
+// app/page.tsx
+const posts = [
+  {
+    id: 1,
+    title: "useEffect 의존성 배열 완전 정복",
+    author: "김개발",
+    date: "2025-04-30",
+    tag: "React",
+    excerpt: "의존성 배열을 잘못 다루면 무한 루프가 납니다.",
+  },
+  {
+    id: 2,
+    title: "Server Actions 실전 패턴",
+    author: "이코드",
+    date: "2025-04-27",
+    tag: "Next.js",
+    excerpt: "API 라우트 없이 서버 함수를 호출하는 새로운 방식.",
+  },
+  {
+    id: 3,
+    title: "TypeScript 제네릭 잘 쓰는 법",
+    author: "박타입",
+    date: "2025-04-25",
+    tag: "TypeScript",
+    excerpt: "제네릭은 타입을 변수처럼 다루는 도구입니다.",
+  },
+  {
+    id: 4,
+    title: "Tailwind 레이아웃 패턴 5가지",
+    author: "정스타일",
+    date: "2025-04-20",
+    tag: "CSS",
+    excerpt: "유틸리티 클래스로 빠르게 레이아웃을 잡는 방법.",
+  },
+  {
+    id: 5,
+    title: "PostgreSQL 인덱스 최적화 노트",
+    author: "최쿼리",
+    date: "2025-04-15",
+    tag: "DB",
+    excerpt: "조회 성능을 좌우하는 인덱스 설계.",
+  },
+];
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main>
+      <h1>DevLog</h1>
+      <p>개발자를 위한 학습 기록 플랫폼</p>
+
+      {posts.length === 0 ? (
+        <p>아직 작성된 글이 없습니다</p>
+      ) : (
+        <ul>
+          {posts.map((post) => (
+            <li key={post.id}>
+              <span>[{post.tag}]</span>
+              <h2>{post.title}</h2>
+              <p>{post.excerpt}</p>
+              <small>
+                {post.author} · {post.date}
+              </small>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
   );
 }

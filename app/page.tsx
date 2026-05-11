@@ -10,6 +10,7 @@ const posts = [
     date: "2025-04-30",
     tag: "React",
     excerpt: "의존성 배열을 잘못 다루면 무한 루프가 납니다.",
+    coverImage: "https://picsum.photos/seed/react/900/300",  // ⭐ 추가
   },
   {
     id: 2,
@@ -26,6 +27,7 @@ const posts = [
     date: "2025-04-25",
     tag: "TypeScript",
     excerpt: "제네릭은 타입을 변수처럼 다루는 도구입니다.",
+
   },
   {
     id: 4,
@@ -34,6 +36,7 @@ const posts = [
     date: "2025-04-20",
     tag: "CSS",
     excerpt: "유틸리티 클래스로 빠르게 레이아웃을 잡는 방법.",
+    coverImage: "https://picsum.photos/seed/css/900/300",  // ⭐ 추가
   },
   {
     id: 5,

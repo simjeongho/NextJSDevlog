@@ -1,5 +1,4 @@
 // app/page.tsx
-import Header from "@/components/Header";
 import PostCard from "@/components/PostCard";
 
 const posts = [
@@ -51,8 +50,6 @@ const posts = [
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white">
-      <Header />
-
       <main className="mx-auto max-w-5xl px-6 py-12">
         <div className="mb-10">
           <h1 className="mb-2 text-4xl font-semibold tracking-tight">
@@ -64,7 +61,6 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-4">
-          // 변경 후 (Step 03) — 스프레드로 단축
           {posts.map((post) => (
           <PostCard key={post.id} {...post} />
           ))}

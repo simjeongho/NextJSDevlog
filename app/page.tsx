@@ -61,15 +61,9 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-4">
+          // 변경 후 (Step 03) — 스프레드로 단축
           {posts.map((post) => (
-            <PostCard
-              key={post.id}
-              title={post.title}
-              author={post.author}
-              date={post.date}
-              tag={post.tag}
-              excerpt={post.excerpt}
-            />
+          <PostCard key={post.id} {...post} />
           ))}
         </div>
       </main>

@@ -159,8 +159,8 @@ export default function HomePage() {
           />
         ) : (
           <div className="grid gap-4">
-            {filteredPosts.map((post, index) => (
-              <PostCard key={index} {...post} />
+            {filteredPosts.map((post) => (
+              <PostCard key={post.id} {...post} />
             ))}
           </div>
         )}

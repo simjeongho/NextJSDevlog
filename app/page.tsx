@@ -74,7 +74,6 @@ export default function HomePage() {
   const [activeTag, setActiveTag] = useState<string>("all");
   // ⭐ 필터링된 글 목록 (state 아니고 매 렌더마다 계산)
   const filteredPosts = activeTag === "all" ? posts : posts.filter((p) => p.tag === activeTag);
-  console.log("⚙ filteredPosts 계산됨", filteredPosts.length);
 
   return (
     <Container>

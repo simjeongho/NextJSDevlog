@@ -19,7 +19,7 @@ export default function LikeButton({ initial = 0 }: LikeButtonProps) {
       setIsLiked(true);
     }
   };
-  console.log("♥ LikeButton 렌더링"); // ⚠️ 임시
+
   return (
     <button
       type="button"

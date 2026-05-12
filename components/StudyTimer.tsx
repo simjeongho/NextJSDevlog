@@ -52,7 +52,7 @@ export default function StudyTimer() {
   };
 
   const progress = seconds / TARGET_SECONDS;
-  console.log("⏱ StudyTimer 렌더링"); // ⚠️ 임시
+
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
       <div className="mb-1 text-xs font-mono uppercase tracking-widest text-zinc-500">

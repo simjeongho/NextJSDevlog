@@ -1,7 +1,7 @@
 // components/StudyTimer.tsx
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CircularProgress from "./CircularProgress";
 
 const TARGET_SECONDS = 25 * 60; // 기본 목표 25분 (1500초)
@@ -18,6 +18,24 @@ export default function StudyTimer() {
 
   // 인터벌 ID 보관 — useRef
   const intervalRef = useRef<number | null>(null);
+
+  // ⭐ 핵심: isRunning 이 바뀔 때마다 effect 실행
+  useEffect(() => {
+    if (!isRunning) return;
+
+    //인터벌 시작 - 1초마다 seconds + 1
+    intervalRef.current = window.setInterval(() => {
+      setSeconds((prev) => prev + 1); // 업데이터 함수로 이전 값 안전하게 사용
+    }, 1000);
+
+    //⭐ 클린업: 다음 effect 실행 전 또는 언마운트 시
+    return () => {
+      if (intervalRef.current !== null) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isRunning]); // ⭐ 의존성: isRunning
 
   const handleStart = () => {
     setIsRunning(true);

@@ -27,11 +27,15 @@ type PostListProps = {
 };
 
 export default function PostList({ posts, tags }: PostListProps) {
+  // ⭐ 활성 태그 state — 부모에서 보유
   const [activeTag, setActiveTag] = useState<string>("all");
+  //⭐ 즉시 반영되는 입력값
   const [query, setQuery] = useState<string>("");
+  //⭐ 디바운스된 값
   const debouncedQuery = useDebounce(query, 300);
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
 
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  // ⭐ 필터링: 태그 + 검색어 (디바운스된)
   const filteredPosts = useMemo(() => {
     let result = activeTag === "all" ? posts : posts.filter((p) => p.tag === activeTag);
 

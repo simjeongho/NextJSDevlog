@@ -1,14 +1,7 @@
-"use client"; // ⭐ 부모도 useState 쓰려면 필요
-import { useMemo, useState } from "react";
 // app/page.tsx
 import Container from "@/components/Container";
-import PostCard from "@/components/PostCard";
-import TagFilter from "@/components/TagFilter";
-import EmptyState from "@/components/EmptyState";
 import StudyTimer from "@/components/StudyTimer";
-import { useDebounce } from "@/hooks/useDebounce";
-import SearchInput from "@/components/SearchInput";
-import SortSelect, { SortOption } from "@/components/SortSelect";
+import PostList from "@/components/PostList";
 
 const posts = [
   {
@@ -73,40 +66,6 @@ const posts = [
 const tags = [...new Set(posts.map((p) => p.tag))];
 
 export default function HomePage() {
-  // ⭐ 활성 태그 state — 부모에서 보유
-  const [activeTag, setActiveTag] = useState<string>("all");
-  //⭐ 즉시 반영되는 입력값
-  const [query, setQuery] = useState("");
-  //⭐ 디바운스된 값
-  const debouncedQuery = useDebounce(query, 300);
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
-  // ⭐ 필터링: 태그 + 검색어 (디바운스된)
-  const filteredPosts = useMemo(() => {
-    let result = activeTag === "all" ? posts : posts.filter((p) => p.tag === activeTag);
-
-    if (debouncedQuery.trim() !== "") {
-      const q = debouncedQuery.toLowerCase();
-      result = result.filter(
-        (p) => p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q),
-      );
-    }
-
-    // ⭐ 정렬 — 스프레드로 복사 후 sort (원본 변경 방지)
-    result = [...result].sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return b.date.localeCompare(a.date);
-        case "oldest":
-          return a.date.localeCompare(b.date);
-        case "shortest":
-          return (a.readingTime ?? 0) - (b.readingTime ?? 0);
-        case "longest":
-          return (b.readingTime ?? 0) - (a.readingTime ?? 0);
-      }
-    });
-    return result;
-  }, [activeTag, debouncedQuery, sortBy]); // ⭐ 의존성에 debouncedQuery
-
   return (
     <Container>
       {/* 히어로 섹션 */}
@@ -130,41 +89,8 @@ export default function HomePage() {
           <StudyTimer />
         </div>
       </section>
-      {/* 글 목록 섹션 */}
-      <section className="py-12">
-        <div className="mb-6 flex items-end justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">최근 글</h2>
-            <p className="mt-1 text-sm text-zinc-500">총 {filteredPosts.length} 개의 글</p>
-          </div>
-          {/* ⭐ 정렬 select */}
-          <SortSelect value={sortBy} onChange={setSortBy} />
-        </div>
-
-        {/* ⭐ 검색 입력 */}
-        <div className="mb-4">
-          <SearchInput value={query} onChange={setQuery} placeholder="제목이나 본문으로 검색..." />
-        </div>
-
-        {/* 태그 필터 (정적 UI) */}
-        <div className="mb-8">
-          <TagFilter tags={tags} activateTag={activeTag} onTagChange={setActiveTag} />
-        </div>
-
-        {/* 카드 그리도 또는 빈 상태 */}
-        {filteredPosts.length == 0 ? (
-          <EmptyState
-            message={`'${activeTag}' 태그의 글이 없습니다.`}
-            hint="다른 태그를 선택해보세요"
-          />
-        ) : (
-          <div className="grid gap-4">
-            {filteredPosts.map((post) => (
-              <PostCard key={post.id} {...post} />
-            ))}
-          </div>
-        )}
-      </section>
+      {/* 글 목록 — 클라이언트 경계 (PostList 안이 클라이언트) */}
+      <PostList posts={posts} tags={tags} />
     </Container>
   );
 }

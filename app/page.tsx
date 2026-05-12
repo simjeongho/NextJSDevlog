@@ -1,3 +1,5 @@
+"use client"; // ⭐ 부모도 useState 쓰려면 필요
+import { useState } from "react";
 // app/page.tsx
 import Container from "@/components/Container";
 import PostCard from "@/components/PostCard";
@@ -67,7 +69,10 @@ const posts = [
 const tags = [...new Set(posts.map((p) => p.tag))];
 
 export default function HomePage() {
-  const filteredPosts = posts;
+  // ⭐ 활성 태그 state — 부모에서 보유
+  const [activeTag, setActiveTag] = useState<string>("all");
+  // ⭐ 필터링된 글 목록 (state 아니고 매 렌더마다 계산)
+  const filteredPosts = activeTag === "all" ? posts : posts.filter((p) => p.tag === activeTag);
 
   return (
     <Container>
@@ -98,12 +103,15 @@ export default function HomePage() {
 
         {/* 태그 필터 (정적 UI) */}
         <div className="mb-8">
-          <TagFilter tags={tags} />
+          <TagFilter tags={tags} activateTag={activeTag} onTagChange={setActiveTag} />
         </div>
 
         {/* 카드 그리도 또는 빈 상태 */}
         {filteredPosts.length == 0 ? (
-          <EmptyState />
+          <EmptyState
+            message={`'${activeTag}' 태그의 글이 없습니다.`}
+            hint="다른 태그를 선택해보세요"
+          />
         ) : (
           <div className="grid gap-4">
             {filteredPosts.map((post) => (

@@ -1,3 +1,5 @@
+import LikeButton from "./LikeButton";
+
 // components/PostCard.tsx
 type PostCardProps = {
   title: string;
@@ -7,6 +9,7 @@ type PostCardProps = {
   excerpt: string;
   readingTime?: number;
   coverImage?: string;
+  initialLikes?: number;
 };
 
 export default function PostCard({
@@ -17,6 +20,7 @@ export default function PostCard({
   excerpt,
   readingTime,
   coverImage,
+  initialLikes,
 }: PostCardProps) {
   return (
     <article className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-700 hover:bg-zinc-900 hover:shadow-lg hover:shadow-cyan-500/5">
@@ -48,6 +52,7 @@ export default function PostCard({
           <span className="font-medium text-zinc-400">{author}</span>
           <span>·</span>
           <span>{date}</span>
+          <LikeButton initial={initialLikes} />
         </div>
       </div>
     </article>

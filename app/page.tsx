@@ -1,11 +1,13 @@
 "use client"; // ⭐ 부모도 useState 쓰려면 필요
-import { useState } from "react";
+import { useMemo, useState } from "react";
 // app/page.tsx
 import Container from "@/components/Container";
 import PostCard from "@/components/PostCard";
 import TagFilter from "@/components/TagFilter";
 import EmptyState from "@/components/EmptyState";
 import StudyTimer from "@/components/StudyTimer";
+import { useDebounce } from "@/hooks/useDebounce";
+import SearchInput from "@/components/SearchInput";
 
 const posts = [
   {
@@ -72,8 +74,23 @@ const tags = [...new Set(posts.map((p) => p.tag))];
 export default function HomePage() {
   // ⭐ 활성 태그 state — 부모에서 보유
   const [activeTag, setActiveTag] = useState<string>("all");
-  // ⭐ 필터링된 글 목록 (state 아니고 매 렌더마다 계산)
-  const filteredPosts = activeTag === "all" ? posts : posts.filter((p) => p.tag === activeTag);
+  //⭐ 즉시 반영되는 입력값
+  const [query, setQuery] = useState("");
+  //⭐ 디바운스된 값
+  const debouncedQuery = useDebounce(query, 300);
+  // ⭐ 필터링: 태그 + 검색어 (디바운스된)
+  const filteredPosts = useMemo(() => {
+    let result = activeTag === "all" ? posts : posts.filter((p) => p.tag === activeTag);
+
+    if (debouncedQuery.trim() !== "") {
+      const q = debouncedQuery.toLowerCase();
+      result = result.filter(
+        (p) => p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q),
+      );
+    }
+
+    return result;
+  }, [activeTag, debouncedQuery]); // ⭐ 의존성에 debouncedQuery
 
   return (
     <Container>
@@ -105,6 +122,11 @@ export default function HomePage() {
             <h2 className="text-2xl font-semibold tracking-tight">최근 글</h2>
             <p className="mt-1 text-sm text-zinc-500">총 {filteredPosts.length} 개의 글</p>
           </div>
+        </div>
+
+        {/* ⭐ 검색 입력 */}
+        <div className="mb-4">
+          <SearchInput value={query} onChange={setQuery} placeholder="제목이나 본문으로 검색..." />
         </div>
 
         {/* 태그 필터 (정적 UI) */}

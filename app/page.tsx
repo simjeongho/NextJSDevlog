@@ -8,6 +8,7 @@ import EmptyState from "@/components/EmptyState";
 import StudyTimer from "@/components/StudyTimer";
 import { useDebounce } from "@/hooks/useDebounce";
 import SearchInput from "@/components/SearchInput";
+import SortSelect, { SortOption } from "@/components/SortSelect";
 
 const posts = [
   {
@@ -78,6 +79,7 @@ export default function HomePage() {
   const [query, setQuery] = useState("");
   //⭐ 디바운스된 값
   const debouncedQuery = useDebounce(query, 300);
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
   // ⭐ 필터링: 태그 + 검색어 (디바운스된)
   const filteredPosts = useMemo(() => {
     let result = activeTag === "all" ? posts : posts.filter((p) => p.tag === activeTag);
@@ -89,8 +91,21 @@ export default function HomePage() {
       );
     }
 
+    // ⭐ 정렬 — 스프레드로 복사 후 sort (원본 변경 방지)
+    result = [...result].sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return b.date.localeCompare(a.date);
+        case "oldest":
+          return a.date.localeCompare(b.date);
+        case "shortest":
+          return (a.readingTime ?? 0) - (b.readingTime ?? 0);
+        case "longest":
+          return (b.readingTime ?? 0) - (a.readingTime ?? 0);
+      }
+    });
     return result;
-  }, [activeTag, debouncedQuery]); // ⭐ 의존성에 debouncedQuery
+  }, [activeTag, debouncedQuery, sortBy]); // ⭐ 의존성에 debouncedQuery
 
   return (
     <Container>
@@ -122,6 +137,8 @@ export default function HomePage() {
             <h2 className="text-2xl font-semibold tracking-tight">최근 글</h2>
             <p className="mt-1 text-sm text-zinc-500">총 {filteredPosts.length} 개의 글</p>
           </div>
+          {/* ⭐ 정렬 select */}
+          <SortSelect value={sortBy} onChange={setSortBy} />
         </div>
 
         {/* ⭐ 검색 입력 */}
@@ -142,8 +159,8 @@ export default function HomePage() {
           />
         ) : (
           <div className="grid gap-4">
-            {filteredPosts.map((post) => (
-              <PostCard key={post.id} {...post} />
+            {filteredPosts.map((post, index) => (
+              <PostCard key={index} {...post} />
             ))}
           </div>
         )}

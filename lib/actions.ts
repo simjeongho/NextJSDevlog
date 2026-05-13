@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { addPost } from "./posts";
 import { authOptions } from "./auth";
 import { getServerSession } from "next-auth";
+import { addStudyLog } from "./study-logs";
 
 export async function createPost(formData: FormData) {
   // ⭐ 세션 검증(미들웨어가 1차 차단하지만 Action도 자체 검증)
@@ -37,4 +38,26 @@ export async function createPost(formData: FormData) {
 
   // ⭐ 새 글 상세 페이지로 이동
   redirect(`/posts/${newPost.slug}`);
+}
+
+export async function saveStudySession(input: {
+  startedAt: string; //ISO string
+  durationSeconds: number;
+}) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error("로그인이 필요합니다. ");
+  }
+
+  if (input.durationSeconds < 60) {
+    return { ok: false, message: "최소 1분 이상 학습해야 저장됩니다." };
+  }
+
+  await addStudyLog({
+    userId: session.user.id,
+    startedAt: new Date(input.startedAt),
+    durationSeconds: input.durationSeconds,
+  });
+
+  return { ok: true };
 }

@@ -3,6 +3,20 @@ import { eq, gte, desc } from "drizzle-orm";
 import { db } from "./db";
 import { studyLogs } from "./db/schema";
 
+/**
+ * 로컬 시각 기준 YYYY-MM-DD 키 생성.
+ *
+ * toISOString().split("T")[0] 는 UTC 변환이라
+ * 한국 시간 자정 근처에서 키가 어긋남.
+ * Date 객체의 getFullYear/Month/Date 는 로컬 시각(KST) 기준이라 안전.
+ */
+function toLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 // ⭐ 학습 로그 추가
 export async function addStudyLog(input: {
   userId: string;
@@ -41,7 +55,7 @@ export async function getDailyStudyMap(
   const map = new Map<string, number>();
 
   for (const log of logs) {
-    const dateKey = log.startedAt.toISOString().split("T")[0]; // YYYY-MM-DD
+    const dateKey = toLocalDateKey(log.startedAt);
     map.set(dateKey, (map.get(dateKey) ?? 0) + log.durationSeconds);
   }
 
@@ -69,14 +83,14 @@ export async function getStudyStats(userId: string) {
   // streak 계산 (오늘부터 거꾸로 연속 학습 일수)
   const dailyMap = new Map<string, number>();
   for (const log of allLogs) {
-    const key = log.startedAt.toISOString().split("T")[0];
+    const key = toLocalDateKey(log.startedAt);
     dailyMap.set(key, (dailyMap.get(key) ?? 0) + log.durationSeconds);
   }
 
   let streak = 0;
   const checkDate = new Date();
   while (true) {
-    const key = checkDate.toISOString().split("T")[0];
+    const key = toLocalDateKey(checkDate);
     if ((dailyMap.get(key) ?? 0) > 0) {
       streak++;
       checkDate.setDate(checkDate.getDate() - 1);
@@ -96,7 +110,7 @@ export async function getWeeklyData(userId: string) {
   for (let i = 6; i >= 0; i--) {
     const date = new Date();
     date.setDate(date.getDate() - i);
-    const key = date.toISOString().split("T")[0];
+    const key = toLocalDateKey(date);
     const dayLabel = ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
     const seconds = dailyMap.get(key) ?? 0;
     result.push({

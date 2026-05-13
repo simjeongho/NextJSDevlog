@@ -1,3 +1,7 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+
 // components/ContributionGraph.tsx
 type ContributionGraphProps = {
   // 키: "YYYY-MM-DD", 값: 그날 학습 시간(초)
@@ -15,6 +19,19 @@ const COLORS = [
   "rgba(0, 217, 255, 0.95)", // 4
 ];
 
+// useSyncExternalStore 용 (v2)
+const emptySubscribe = () => () => {};
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
+
+// 로컬 시각 키 생성용 (⭐ 신규 - lib/study-logs와 날짜 형식 맞추기 - 클라이언트 - 서버 키 호환)
+function toLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function intensityForSeconds(seconds: number): number {
   if (seconds === 0) return 0;
   if (seconds < 1800) return 1;
@@ -24,6 +41,20 @@ function intensityForSeconds(seconds: number): number {
 }
 
 export default function ContributionGraph({ data, weeks = 26 }: ContributionGraphProps) {
+  // Hydration-safe 클라이언트 감지
+  const mounted = useSyncExternalStore(emptySubscribe, getSnapshot, getServerSnapshot);
+  const svgWidth = weeks * (CELL_SIZE + CELL_GAP);
+  const svgHeight = 7 * (CELL_SIZE + CELL_GAP);
+
+  // 서버 + Hydration 시점엔 빈 격자만
+  if (!mounted) {
+    return (
+      <div className="overflow-x-auto">
+        <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`} />
+      </div>
+    );
+  }
+
   // 오늘부터 거꾸로 weeks*7 일 만들기
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -46,14 +77,11 @@ export default function ContributionGraph({ data, weeks = 26 }: ContributionGrap
     const week = Math.floor((totalDays - 1 - i) / 7);
     const day = date.getDay(); // 0 = 일
 
-    const dateKey = date.toISOString().split("T")[0];
+    const dateKey = toLocalDateKey(date);
     const seconds = data.get(dateKey) ?? 0;
 
     cells.push({ date, week, day, seconds });
   }
-
-  const svgWidth = weeks * (CELL_SIZE + CELL_GAP);
-  const svgHeight = 7 * (CELL_SIZE + CELL_GAP);
 
   return (
     <div className="overflow-x-auto">
@@ -65,7 +93,7 @@ export default function ContributionGraph({ data, weeks = 26 }: ContributionGrap
           const x = cell.week * (CELL_SIZE + CELL_GAP);
           const y = cell.day * (CELL_SIZE + CELL_GAP);
           const minutes = Math.round(cell.seconds / 60);
-          const dateLabel = cell.date.toISOString().split("T")[0];
+          const dateLabel = toLocalDateKey(cell.date);
 
           return (
             <rect

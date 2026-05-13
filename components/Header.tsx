@@ -32,6 +32,12 @@ export default function Header() {
                 <span className="ml-1 text-zinc-600">님</span>
               </span>
               <Link
+                href="/dashboard"
+                className="rounded-lg border border-zinc-800 px-4 py-2 text-sm text-zinc-400 transition-colors hover:border-zinc-700 hover:text-white"
+              >
+                📊 대시보드
+              </Link>
+              <Link
                 href="/write"
                 className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-cyan-400"
               >

@@ -15,6 +15,17 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ⭐ 학습 로그 테이블 추가
+export const studyLogs = pgTable("study_logs", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id", { length: 100 }).notNull(),
+  startedAt: timestamp("started_at").notNull(),
+  durationSeconds: integer("duration_seconds").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ⭐ 타입 자동 추론 — Drizzle 의 매력
 export type Post = typeof posts.$inferSelect; // SELECT 결과 타입
 export type NewPost = typeof posts.$inferInsert; // INSERT 시 필요한 타입
+export type StudyLog = typeof studyLogs.$inferSelect;
+export type NewStudyLog = typeof studyLogs.$inferInsert;

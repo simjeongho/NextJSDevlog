@@ -4,8 +4,15 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { addPost } from "./posts";
+import { authOptions } from "./auth";
+import { getServerSession } from "next-auth";
 
 export async function createPost(formData: FormData) {
+  // ⭐ 세션 검증(미들웨어가 1차 차단하지만 Action도 자체 검증)
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.name) {
+    throw new Error("로그인이 필요합니다.");
+  }
   // ⭐ FormData 에서 값 꺼내기
   const title = formData.get("title") as string;
   const content = formData.get("content") as string;

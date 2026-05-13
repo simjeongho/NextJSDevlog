@@ -8,18 +8,7 @@ import EmptyState from "./EmptyState";
 import SearchInput from "./SearchInput";
 import SortSelect, { type SortOption } from "./SortSelect";
 import { useDebounce } from "@/hooks/useDebounce";
-
-// ⭐ Server Component 에서 받을 props 타입
-type Post = {
-  id: number;
-  title: string;
-  author: string;
-  date: string;
-  tag: string;
-  excerpt: string;
-  readingTime?: number;
-  coverImage?: string;
-};
+import type { Post } from "@/lib/posts";
 
 type PostListProps = {
   posts: Post[]; // ⭐ 서버에서 받음 (직렬화 가능한 plain object)

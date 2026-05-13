@@ -1,6 +1,7 @@
 "use client";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 
 // components/Header.tsx
 export default function Header() {
@@ -21,6 +22,8 @@ export default function Header() {
 
         {/* 메뉴 */}
         <nav className="flex items-center gap-6 text-sm text-zinc-400">
+          <ThemeToggle />
+          {/* ⭐ 추가 */}
           {status === "loading" ? (
             //loading 중이라면?
             <div className="h-9 w-20 animate-pulse rounded-lg bg-zinc-900" />

@@ -3,6 +3,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import CircularProgress from "./CircularProgress";
+import { saveStudySession } from "@/lib/actions";
+import { useSession } from "next-auth/react";
 
 const TARGET_SECONDS = 25 * 60; // 기본 목표 25분 (1500초)
 
@@ -13,11 +15,15 @@ function formatTime(totalSeconds: number): string {
 }
 
 export default function StudyTimer() {
+  const { data: session } = useSession();
   const [seconds, setSeconds] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
-
+  const [savedMessage, setSavedMessage] = useState<string>("");
   // 인터벌 ID 보관 — useRef
   const intervalRef = useRef<number | null>(null);
+
+  //시작 시간 보관
+  const startedAtRef = useRef<Date | null>(null);
 
   // ⭐ 핵심: isRunning 이 바뀔 때마다 effect 실행
   useEffect(() => {
@@ -38,17 +44,32 @@ export default function StudyTimer() {
   }, [isRunning]); // ⭐ 의존성: isRunning
 
   const handleStart = () => {
+    startedAtRef.current = new Date(); //⭐ 시작 시각 기록
     setIsRunning(true);
-    // setInterval 시작은 다음 step 에서 useEffect 로
+    setSavedMessage("");
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     setIsRunning(false);
+
+    // 로그인 + 1분 이상이면 DB 저장
+    if (session?.user && seconds >= 60 && startedAtRef.current) {
+      const result = await saveStudySession({
+        startedAt: startedAtRef.current.toISOString(),
+        durationSeconds: seconds,
+      });
+
+      if (result.ok) {
+        setSavedMessage(`✓ ${Math.round(seconds / 60)}분 학습 기록됨`);
+      }
+    }
   };
 
   const handleReset = () => {
     setIsRunning(false);
     setSeconds(0);
+    setSavedMessage("");
+    startedAtRef.current = null; // 시작 시간 초기화
   };
 
   const progress = seconds / TARGET_SECONDS;
@@ -97,6 +118,12 @@ export default function StudyTimer() {
           초기화
         </button>
       </div>
+
+      {/* ⭐ 저장 결과 메시지  */}
+      {savedMessage && <p className="text-center text-xs text-lime-400">{savedMessage}</p>}
+      {!session?.user && seconds > 0 && (
+        <p className="text-center text-xs text-zinc-500">로그인하면 학습 시간이 기록됩니다</p>
+      )}
     </div>
   );
 }

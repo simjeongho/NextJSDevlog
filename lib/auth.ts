@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 // ⭐ 데모용 사용자 (실무에선 DB 의 users 테이블 + bcrypt 비교)
 const DEMO_USERS = [
-  { id: "1", username: "심정호", password: "심정호123", name: "심정호" },
+  { id: "1", username: "jeongho", password: "jeongho123", name: "심정호" },
   { id: "2", username: "bob", password: "bob123", name: "밥" },
   { id: "3", username: "kim", password: "kim123", name: "김개발" },
 ];

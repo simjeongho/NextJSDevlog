@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +25,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ko">
       <body className="min-h-screen bg-black text-white antialiased">
         <AuthProvider>
-          {" "}
-          {/* ⭐ 트리 전체 감싸기 */}
-          <Header />
-          {children}
+          <ThemeProvider>
+            {" "}
+            {/* ⭐ 트리 전체 감싸기 */}
+            <Header />
+            {children}
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

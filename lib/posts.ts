@@ -13,7 +13,7 @@ export type Post = {
   coverImage?: string;
 };
 
-export const posts: Post[] = [
+export let posts: Post[] = [
   {
     id: 1,
     slug: "use-effect-deps-guide",
@@ -84,6 +84,36 @@ export const posts: Post[] = [
     readingTime: 8,
   },
 ];
+
+// ⭐ 신규 — 글 추가 함수
+export async function addPost(input: {
+  title: string;
+  content: string;
+  tag: string;
+  author: string;
+  excerpt: string;
+}): Promise<Post> {
+  //시뮬레이션 지연
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  const newPost: Post = {
+    id: Math.max(...posts.map((p) => p.id)) + 1,
+    slug: input.title
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9가-힣-]/g, ""),
+    title: input.title,
+    author: input.author,
+    date: new Date().toISOString().split("T")[0], //YYYY-MM-DD
+    tag: input.tag,
+    excerpt: input.excerpt,
+    content: input.content,
+    readingTime: Math.ceil(input.content.length / 500),
+  };
+
+  posts = [newPost, ...posts]; // 얕은 복사 새 글을 맨 앞에
+  return newPost;
+}
 
 // ⭐ slug 로 글 하나 조회
 export async function getPostBySlug(slug: string): Promise<Post | undefined> {

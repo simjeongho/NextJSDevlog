@@ -9,8 +9,8 @@ type PostCardProps = {
   date: string;
   tag: string;
   excerpt: string;
-  readingTime?: number;
-  coverImage?: string;
+  readingTime?: number | null;
+  coverImage?: string | null;
   initialLikes?: number;
 };
 

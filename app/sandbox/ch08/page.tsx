@@ -9,7 +9,7 @@ function EffectDepsDemo() {
   const [log, setLog] = useState<string[]>([]);
 
   useEffect(() => {
-    setLog((prev) => [...prev, `count 가 ${count} 로 변경됨`].slice(-5));
+    //setLog((prev) => [...prev, `count 가 ${count} 로 변경됨`].slice(-5));
   }, [count]);
 
   return (

@@ -1,5 +1,4 @@
 // app/sandbox/ch12/page.tsx
-"use client";
 
 // === 데모 ① Server / Client 비교표 ===
 function ComparisonDemo() {
